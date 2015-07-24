@@ -110,6 +110,7 @@ Serial.println(inValue2);
 Serial.println(inValue3);
 //Serial.println(inValue5);
 
+// open valve
   if (inValue2 == LOW && inValue3 == HIGH) {
     delay (400);
       if (inValue2 == LOW && inValue3 == HIGH) {    
@@ -118,16 +119,7 @@ Serial.println(inValue3);
         stop(); //  stop includes delay
       }
   }
-  if (inValue2 == LOW && inValue3 == LOW) {
-    delay (400);
-    if (inValue2 == LOW && inValue3 == LOW) {
-      forward(); // RUN PUMP
-      delay(1000);
-    }
-  }
-  if (inValue5 == HIGH) {
-    stop();
-  }
+
   if (inValue2 == HIGH && inValue3 == LOW) {
       delay (400);
       if (inValue2 == HIGH && inValue3 == LOW) {  
@@ -135,6 +127,17 @@ Serial.println(inValue3);
         delay(3000);
         stop();
       }
+  }
+
+ if (inValue2 == LOW && inValue3 == LOW) {
+    delay (400);
+    if (inValue2 == LOW && inValue3 == LOW) {
+      forward(); // RUN PUMP
+      delay(1000);
+    }
+  }
+  if (inValue2 == HIGH && inValue3 == HIGH) {
+    stop();
   }
 
   // IF I WANTED TO RUN PUMP IN REVERSE
