@@ -27,16 +27,15 @@ int pinI4 = 13; //define I4 interface
 int speedpinB = 10; //enable motor B
 int spead = 127; //define the spead of motor
 
-int inPin3 = 0;  // Interrupt 0 is on DIGITAL PIN 2!
-int inPin4 = 1; // Interrupt 0 is on DIGITAL PIN 3!
-//int inPin5 = 2;
+int inPin2 = 2;  
+int inPin3 = 3; 
 
+//int inValue2 = 0;
 //int inValue3 = 0;
-//int inValue4 = 0;
 //int inValue5 = 0;
   
+volatile int inValue2 = HIGH;      // The input state toggle
 volatile int inValue3 = HIGH;      // The input state toggle
-volatile int inValue4 = HIGH;      // The input state toggle
 
 void setup()
 {
@@ -48,10 +47,10 @@ void setup()
   pinMode(speedpinB, OUTPUT);
 
 //use input pullup to keep stray electricity from causing problem
+  pinMode(inPin2, INPUT_PULLUP);
   pinMode(inPin3, INPUT_PULLUP);
-  pinMode(inPin4, INPUT_PULLUP);
+//  pinMode(inPin2, INPUT);
 //  pinMode(inPin3, INPUT);
-//  pinMode(inPin4, INPUT);
 //  pinMode(inPin5, INPUT);
 
   Serial.begin(9600); 
@@ -103,25 +102,25 @@ void stop()//
 void loop()
 {
 
-   inValue3 = digitalRead(inPin3); // open valve
-   inValue4 = digitalRead(inPin4); // close valve
+   inValue2 = digitalRead(inPin2); // open valve
+   inValue3 = digitalRead(inPin3); // close valve
 //   inValue5 = digitalRead(inPin5); // run pump
 
+Serial.println(inValue2);
 Serial.println(inValue3);
-Serial.println(inValue4);
 //Serial.println(inValue5);
 
-  if (inValue3 == LOW && inValue4 == HIGH) {
+  if (inValue2 == LOW && inValue3 == HIGH) {
     delay (400);
-      if (inValue3 == LOW && inValue4 == HIGH) {    
+      if (inValue2 == LOW && inValue3 == HIGH) {    
         vopen();
         delay(3000);
         stop(); //  stop includes delay
       }
   }
-  if (inValue3 == LOW && inValue4 == LOW) {
+  if (inValue2 == LOW && inValue3 == LOW) {
     delay (400);
-    if (inValue3 == LOW && inValue4 == LOW) {
+    if (inValue2 == LOW && inValue3 == LOW) {
       forward(); // RUN PUMP
       delay(1000);
     }
@@ -129,9 +128,9 @@ Serial.println(inValue4);
   if (inValue5 == HIGH) {
     stop();
   }
-  if (inValue3 == HIGH && inValue4 == LOW) {
+  if (inValue2 == HIGH && inValue3 == LOW) {
       delay (400);
-      if (inValue3 == HIGH && inValue4 == LOW) {  
+      if (inValue2 == HIGH && inValue3 == LOW) {  
         vclose();
         delay(3000);
         stop();
@@ -143,8 +142,8 @@ Serial.println(inValue4);
   //  delay(3000);
   //  stop();
 
+//Serial.println (inValue2);
 //Serial.println (inValue3);
-//Serial.println (inValue4);
 //Serial.println (inValue5);
 //delay(1000);
 }

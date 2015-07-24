@@ -21,8 +21,8 @@
 //***Before Startup
 
 //Rainbarrel characteristics
-int tDrainage = (30 * 60) * 60 ; // half an hour to fully drain the tank using valve (seconds)
-int tOFPump = (15 * 60) * 60 ; // Time it takes to drain the tank using an overflow pump
+int tDrainage = (30 * 60); // * 60 ; // half an hour to fully drain the tank using valve (seconds)
+int tOFPump = (15 * 60) ;// * 60 ; // Time it takes to drain the tank using an overflow pump
 float radius = 11.5 / 12 ; //ft
 float maxDist = 5 ; // 32 / 12 ; //ft // depth to water surface
 float minDist = 4 / 12 ; //ft // dist to water surface
@@ -40,7 +40,7 @@ int useInletValve = false ;
 int UseNightTime = true;
 
 //Site characteristics
-int rArea = 20 * 50 ; // ft^2 Enter roof area, in sq ft for 1 downspout (A ft * B ft)
+int rArea = 20 * 20 ; // ft^2 Enter roof area, in sq ft for 1 downspout (A ft * B ft)
 //int zipcode = 45202 not needed now. Just directly calling web address
 
 // Check vitals when awakening
@@ -53,8 +53,8 @@ float Volume = 0;
 void setup() {
 
 // Setup valves and pumps 
+  pinMode(D2, OUTPUT);
   pinMode(D3, OUTPUT);
-  pinMode(D4, OUTPUT);
 //  pinMode(D5, OUTPUT);
 
   // Get time
@@ -89,7 +89,7 @@ void setup() {
 
   int readanalog3 = analogRead(A3);
   delay(100);
-  dist = mmToft * (readanalog3) * 5/4 ; //EZread();
+  dist = mmToft * (readanalog3) * 5/4 ;  // ????
   Volume = Cpi * dist * radius * radius; // Initialize volume - this is the available capacity
 
   // Lets listen for the hook response
@@ -98,7 +98,7 @@ void setup() {
   // Lets give ourselves 10 seconds before we actually start the program.
   // That will just give us a chance to open the serial monitor before the program sends the request
   for (int i = 0; i < 10; i++) {
-    Serial.println("waiting " + String(10 - i) + " x4 seconds before we publish");
+    Serial.println("waiting " + String(10 - i) + "  seconds before we publish");
     readanalog3 = analogRead(A3);
     delay(100);
     Serial.println(readanalog3);
@@ -131,7 +131,7 @@ void loop() {
   // publish the event that will trigger our webhook
   Spark.publish("GetUsSomeWeatherData");
     // and wait at least 60 seconds before doing it again
-    delay(500000);
+    delay(50000); //ms
 }
 
 // This function will get called when weather data comes in
@@ -338,9 +338,11 @@ int flagOpenValve = 0;
         // First we need to send a signal over to the slave arduino
         Serial.println("Open the Valve");
         delay(200);
-      digitalWrite(D3, HIGH); // I've just sent a command to open the valve
+      digitalWrite(D2, HIGH); // I've just sent a command to open the valve
+      digitalWrite(D3, LOW); // I've just sent a command to open the valve
+      
       delay (2000);
-      digitalWrite(D3, LOW);
+      digitalWrite(D2, LOW);
       delay (200);
       flagOpenValve = 1; // make sure we remember that the valve is open
     }
@@ -348,8 +350,8 @@ int flagOpenValve = 0;
       if (useDrainPump) {
         Serial.println("Run Drainage pump");
         delay(200);
+        digitalWrite (D2, HIGH);
         digitalWrite (D3, HIGH);
-        digitalWrite (D4, HIGH);
         delay (2000);
       }
       else {
@@ -367,8 +369,8 @@ int flagOpenValve = 0;
 
     Serial.println("Turn Pump Off");
     delay(200);
-    digitalWrite (D3, LOW); // PUMP off
-    digitalWrite (D4, LOW); // pump is off
+    digitalWrite (D2, LOW); // PUMP off
+    digitalWrite (D3, LOW); // pump is off
     delay (2000);
   }
 
@@ -376,14 +378,14 @@ int flagOpenValve = 0;
   if ((Volume > threeHrVolume) || (dist > maxDist)) {
     Serial.println("Make sure everything is Off and Close the Valve");
       delay (100);
-    digitalWrite (D4, LOW); // pump is off JUST in case
-//      delay (2000);
-    digitalWrite(D3, LOW); //valve isn't trying to open, just in case
+    digitalWrite (D3, LOW); // pump is off JUST in case
+    digitalWrite(D2, LOW); //valve isn't trying to open, just in case
     delay (2000);
     if (flagOpenValve == 1){
-       digitalWrite(D4, HIGH); // I've just sent a command to close the valve
+       digitalWrite(D2, LOW); 
+       digitalWrite(D3, HIGH); // I've just sent a command to close the valve
        delay (2000);
-       digitalWrite(D4, LOW);
+       digitalWrite(D3, LOW);
        delay (2000);
     }
   }
